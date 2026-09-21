@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 297" width="420" height="297">
+  <defs>
+    <pattern id="diamonds" x="0" y="0" width="28" height="28" patternUnits="userSpaceOnUse">
+      <polygon points="14,0 28,14 14,28 0,14" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="0.8"/>
+    </pattern>
+    <pattern id="dots" x="0" y="0" width="14" height="14" patternUnits="userSpaceOnUse">
+      <circle cx="7" cy="7" r="0.8" fill="rgba(255,255,255,0.12)"/>
+    </pattern>
+  </defs>
+
+  <!-- Background -->
+  <rect width="420" height="297" fill="#1e3a5f"/>
+
+  <!-- Diamond pattern -->
+  <rect width="420" height="297" fill="url(#diamonds)"/>
+
+  <!-- Dot overlay -->
+  <rect width="420" height="297" fill="url(#dots)"/>
+
+  <!-- Outer border -->
+  <rect x="6" y="6" width="408" height="285" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1.5" rx="3"/>
+
+  <!-- Inner border -->
+  <rect x="12" y="12" width="396" height="273" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="0.8" rx="2"/>
+
+  <!-- Corner diamonds -->
+  <polygon points="30,15 42,27 30,39 18,27" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="1"/>
+  <polygon points="390,15 402,27 390,39 378,27" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="1"/>
+  <polygon points="30,258 42,270 30,282 18,270" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="1"/>
+  <polygon points="390,258 402,270 390,282 378,270" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="1"/>
+
+  <!-- Center text -->
+  <text x="210" y="142" text-anchor="middle" font-size="13" fill="rgba(255,255,255,0.55)" font-family="Georgia, serif" font-style="italic" letter-spacing="2">Sichtwechsel</text>
+  <line x1="140" y1="150" x2="280" y2="150" stroke="rgba(255,255,255,0.2)" stroke-width="0.6"/>
+</svg>
