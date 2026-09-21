@@ -43,71 +43,88 @@ function openNewCard() {
 </script>
 
 <template>
-  <header class="flex items-center justify-between px-4 h-12 border-b border-gray-200 bg-white flex-shrink-0 z-10">
-    <!-- Links: Logo + Erstellen/Importieren -->
-    <div class="flex items-center gap-2">
-      <img src="@/assets/logo.jpg" alt="Logo" class="h-8 w-auto object-contain mr-1" />
+  <header class="relative flex items-center justify-between px-4 h-12 border-b border-gray-200 bg-white shrink-0 z-10">
 
-      <!-- Neue Karte -->
+    <!-- Links: Hamburger (Mobile) + Neue Karte + Importieren -->
+    <div class="flex items-center gap-1.5">
       <button
-        class="text-sm px-3 py-1.5 rounded-md border border-gray-300 hover:bg-gray-50 transition-colors"
+        class="lg:hidden w-8 h-8 flex items-center justify-center text-gray-500 hover:text-gray-700 transition-colors"
+        @click="uiStore.toggleSidebar()"
+      >
+        <i class="fa-thin fa-bars text-lg" />
+      </button>
+
+      <!-- Logo: nur Desktop in linker Gruppe -->
+      <img src="@/assets/logo.jpg" alt="Logo" class="hidden lg:block h-8 w-auto object-contain mr-1" />
+
+      <button
+        class="w-8 h-8 lg:w-auto lg:h-auto flex items-center justify-center lg:px-3 lg:py-1.5 text-sm rounded-md border border-gray-300 hover:bg-gray-50 transition-colors"
         title="Neue Karte manuell erstellen"
         @click="openNewCard"
       >
-        <i class="fa-thin fa-plus mr-1" /> Neue Karte
+        <i class="fa-thin fa-plus" />
+        <span class="hidden lg:inline ml-1">Neue Karte</span>
       </button>
 
-      <!-- Import -->
       <button
         data-tour="import-btn"
-        class="text-sm px-3 py-1.5 rounded-md border border-gray-300 hover:bg-gray-50 transition-colors"
+        class="w-8 h-8 lg:w-auto lg:h-auto flex items-center justify-center lg:px-3 lg:py-1.5 text-sm rounded-md border border-gray-300 hover:bg-gray-50 transition-colors"
         title="Excel-Datei importieren"
         @click="uiStore.openImportDialog()"
       >
-        Importieren
+        <i class="fa-thin fa-file-import" />
+        <span class="hidden lg:inline ml-1">Importieren</span>
       </button>
     </div>
 
-    <!-- Rechts: Exportieren + Neu starten -->
-    <div class="flex items-center gap-2">
-      <!-- Excel Download -->
+    <!-- Logo: Mobile, absolut zentriert -->
+    <img src="@/assets/logo.jpg" alt="Logo" class="lg:hidden absolute left-1/2 -translate-x-1/2 h-8 w-auto object-contain pointer-events-none" />
+
+    <!-- Rechts: Excel + PDF + Reset -->
+    <div class="flex items-center gap-1.5">
       <button
         data-tour="excel-btn"
         :disabled="!hasData"
-        class="text-sm px-3 py-1.5 rounded-md border border-gray-300 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+        class="w-8 h-8 lg:w-auto lg:h-auto flex items-center justify-center lg:px-3 lg:py-1.5 text-sm rounded-md border border-gray-300 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
         title="Aktuelle Texte als Excel herunterladen"
         @click="gameStore.exportToExcel()"
       >
-        Excel <i class="fa-thin fa-arrow-down" />
+        <span class="hidden lg:inline">Excel </span><i class="fa-thin fa-arrow-down" />
       </button>
 
-      <!-- PDF Export -->
       <button
         data-tour="pdf-btn"
         :disabled="!hasData || uiStore.isExporting"
-        class="text-sm px-3 py-1.5 rounded-md bg-primary-600 text-white hover:bg-primary-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors font-medium"
+        class="w-8 h-8 lg:w-auto lg:h-auto flex items-center justify-center lg:px-3 lg:py-1.5 text-sm rounded-md bg-primary-600 text-white hover:bg-primary-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors font-medium"
+        :title="uiStore.isExporting ? 'Exportiere…' : 'PDF exportieren'"
         @click="$emit('exportPdf')"
       >
-        <span v-if="uiStore.isExporting">Exportiere…</span>
-        <span v-else>PDF exportieren</span>
+        <i class="fa-thin fa-file-pdf" />
+        <span class="hidden lg:inline ml-1">
+          <span v-if="uiStore.isExporting">Exportiere…</span>
+          <span v-else>PDF exportieren</span>
+        </span>
       </button>
 
-      <!-- Neu starten -->
       <template v-if="hasData">
         <div class="w-px h-5 bg-gray-200" />
         <template v-if="confirmingReset">
-          <span class="text-xs text-red-600">Alle Daten löschen?</span>
+          <span class="hidden lg:inline text-xs text-red-600">Alle Daten löschen?</span>
           <button
-            class="text-xs px-2.5 py-1.5 rounded-md bg-red-600 text-white hover:bg-red-700 transition-colors font-medium"
+            class="w-8 h-8 lg:w-auto lg:h-auto flex items-center justify-center lg:px-2.5 lg:py-1.5 text-xs rounded-md bg-red-600 text-white hover:bg-red-700 transition-colors font-medium"
+            title="Ja, alle Daten löschen"
             @click="confirmReset"
           >
-            Ja, löschen
+            <i class="fa-thin fa-check" />
+            <span class="hidden lg:inline ml-1">Ja, löschen</span>
           </button>
           <button
-            class="text-xs px-2.5 py-1.5 rounded-md border border-gray-300 hover:bg-gray-50 transition-colors"
+            class="w-8 h-8 lg:w-auto lg:h-auto flex items-center justify-center lg:px-2.5 lg:py-1.5 text-xs rounded-md border border-gray-300 hover:bg-gray-50 transition-colors"
+            title="Abbrechen"
             @click="cancelReset"
           >
-            Abbrechen
+            <i class="fa-thin fa-xmark" />
+            <span class="hidden lg:inline ml-1">Abbrechen</span>
           </button>
         </template>
         <button

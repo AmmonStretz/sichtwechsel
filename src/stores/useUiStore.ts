@@ -15,11 +15,16 @@ export const useUiStore = defineStore('ui', {
     firstColumnIsLabel: true,
     showDataDialog: false,
     activeSidebarSection: 'schrift' as 'schrift' | 'bilder' | 'daten',
+    sidebarOpen: false,
     filterPartyId: '',
     filterStatementId: '',
   }),
 
   actions: {
+    toggleSidebar() {
+      this.sidebarOpen = !this.sidebarOpen
+    },
+
     selectCard(cardId: string | null) {
       this.selectedCardId = cardId
     },
@@ -89,6 +94,7 @@ export const useUiStore = defineStore('ui', {
       this.pendingImport = null
       this.showDataDialog = false
       this.activeSidebarSection = 'schrift'
+      this.sidebarOpen = false
       this.filterPartyId = ''
       this.filterStatementId = ''
     },

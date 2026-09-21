@@ -28,7 +28,10 @@ const selectedStatement = computed(() =>
 </script>
 
 <template>
-  <aside class="w-80 flex flex-col border-r border-gray-200 bg-gray-50 shrink-0 overflow-hidden">
+  <aside
+    class="fixed top-12 bottom-0 left-0 z-30 w-80 flex flex-col border-r border-gray-200 bg-gray-50 shrink-0 overflow-hidden transition-transform duration-300 lg:relative lg:top-0 lg:z-auto lg:translate-x-0"
+    :class="uiStore.sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
+  >
 
     <!-- Abschnitts-Buttons -->
     <div class="flex border-b border-gray-200 bg-white shrink-0">
@@ -58,6 +61,12 @@ const selectedStatement = computed(() =>
         @click="activeSection = 'daten'"
       >
         Daten
+      </button>
+      <button
+        class="lg:hidden w-10 flex items-center justify-center text-gray-400 hover:text-gray-600 border-b-2 border-transparent shrink-0"
+        @click="uiStore.sidebarOpen = false"
+      >
+        <i class="fa-thin fa-xmark" />
       </button>
     </div>
 
