@@ -4,6 +4,7 @@ import { useGameStore } from '@/stores/useGameStore'
 import { useUiStore } from '@/stores/useUiStore'
 import { usePrintScale } from '@/composables/usePrintScale'
 import PrintPage from '@/components/cards/PrintPage.vue'
+import GroupedPreview from '@/components/cards/GroupedPreview.vue'
 import PageNavigator from '@/components/controls/PageNavigator.vue'
 
 const gameStore = useGameStore()
@@ -20,7 +21,7 @@ const scaledHeight = computed(() => 1123 * scale.value)
   <main ref="containerRef" data-tour="preview-area" class="flex-1 overflow-y-auto bg-gray-100 flex flex-col">
     <!-- Leerzustand -->
     <div
-      v-if="!gameStore.hasData"
+      v-if="!gameStore.isInitialized"
       class="flex-1 flex flex-col items-center justify-center text-center p-8"
     >
       <i class="fa-thin fa-cards-blank text-6xl text-gray-300 mb-6" />
@@ -52,12 +53,12 @@ const scaledHeight = computed(() => 1123 * scale.value)
       </div>
     </div>
 
-    <template v-else>
+    <template v-else-if="gameStore.isInitialized">
       <!-- Navigation -->
       <PageNavigator />
 
-      <!-- Preview-Bereich -->
-      <div class="flex-1 flex items-start justify-center p-6">
+      <!-- Druck-Layout -->
+      <div v-if="uiStore.layoutMode === 'druck'" class="flex-1 flex items-start justify-center p-6">
         <div
           class="origin-top-left"
           :style="{
@@ -74,6 +75,13 @@ const scaledHeight = computed(() => 1123 * scale.value)
           </div>
         </div>
       </div>
+
+      <!-- Gruppierte Ansicht (nach Partei oder Thema) -->
+      <GroupedPreview
+        v-else
+        :mode="uiStore.previewMode"
+        :group-by="uiStore.layoutMode as 'partei' | 'thema'"
+      />
     </template>
   </main>
 </template>

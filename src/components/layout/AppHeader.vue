@@ -10,13 +10,11 @@ const emit = defineEmits<{
   exportPdf: []
 }>()
 
+const isInitialized = computed(() => gameStore.isInitialized)
 const hasData = computed(() => gameStore.hasData)
 
 const confirmingReset = ref(false)
-
-function requestReset() {
-  confirmingReset.value = true
-}
+const showProjectMenu = ref(false)
 
 function confirmReset() {
   gameStore.reset()
@@ -28,24 +26,21 @@ function cancelReset() {
   confirmingReset.value = false
 }
 
-function openNewCard() {
-  if (gameStore.parties.length === 0) {
-    const partyId = gameStore.addParty('Partei 1')
-    const stmtId = gameStore.addStatement('Karte 1')
-    const cardId = `${stmtId}__${partyId}`
-    uiStore.selectedCardId = cardId
-    uiStore.setCurrentPage(0)
-    uiStore.activeSidebarSection = 'schrift'
-  } else {
-    uiStore.openDataDialog()
-  }
+function openImport() {
+  showProjectMenu.value = false
+  uiStore.openImportDialog()
+}
+
+function openNewProject() {
+  showProjectMenu.value = false
+  uiStore.openDataDialog()
 }
 </script>
 
 <template>
   <header class="relative flex items-center justify-between px-4 h-12 border-b border-gray-200 bg-white shrink-0 z-10">
 
-    <!-- Links: Hamburger (Mobile) + Neue Karte + Importieren -->
+    <!-- Links: Hamburger (Mobile) + Neues Projekt -->
     <div class="flex items-center gap-1.5">
       <button
         class="lg:hidden w-8 h-8 flex items-center justify-center text-gray-500 hover:text-gray-700 transition-colors"
@@ -57,24 +52,48 @@ function openNewCard() {
       <!-- Logo: nur Desktop in linker Gruppe -->
       <img src="@/assets/logo.jpg" alt="Logo" class="hidden lg:block h-8 w-auto object-contain mr-1" />
 
-      <button
-        class="w-8 h-8 lg:w-auto lg:h-auto flex items-center justify-center lg:px-3 lg:py-1.5 text-sm rounded-md border border-gray-300 hover:bg-gray-50 transition-colors"
-        title="Neue Karte manuell erstellen"
-        @click="openNewCard"
-      >
-        <i class="fa-thin fa-plus" />
-        <span class="hidden lg:inline ml-1">Neue Karte</span>
-      </button>
+      <!-- Neues Projekt Dropdown -->
+      <div class="relative">
+        <button
+          data-tour="import-btn"
+          class="w-8 h-8 lg:w-auto lg:h-auto flex items-center justify-center lg:px-3 lg:py-1.5 text-sm rounded-md border border-gray-300 hover:bg-gray-50 transition-colors gap-1.5"
+          title="Neues Projekt erstellen"
+          @click="showProjectMenu = !showProjectMenu"
+        >
+          <i class="fa-thin fa-folder-plus" />
+          <span class="hidden lg:inline">Neues Projekt</span>
+          <i class="fa-thin fa-chevron-down hidden lg:inline text-xs text-gray-400" />
+        </button>
 
-      <button
-        data-tour="import-btn"
-        class="w-8 h-8 lg:w-auto lg:h-auto flex items-center justify-center lg:px-3 lg:py-1.5 text-sm rounded-md border border-gray-300 hover:bg-gray-50 transition-colors"
-        title="Excel-Datei importieren"
-        @click="uiStore.openImportDialog()"
-      >
-        <i class="fa-thin fa-file-import" />
-        <span class="hidden lg:inline ml-1">Importieren</span>
-      </button>
+        <!-- Overlay zum Schließen -->
+        <div
+          v-if="showProjectMenu"
+          class="fixed inset-0 z-20"
+          @click="showProjectMenu = false"
+        />
+
+        <!-- Dropdown -->
+        <div
+          v-if="showProjectMenu"
+          class="absolute left-0 top-full mt-1 z-30 w-48 bg-white rounded-lg border border-gray-200 shadow-lg overflow-hidden"
+        >
+          <button
+            class="w-full flex items-center gap-2.5 px-3 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors text-left"
+            @click="openImport"
+          >
+            <i class="fa-thin fa-file-import text-gray-400 w-4 text-center" />
+            Importieren
+          </button>
+          <div class="border-t border-gray-100" />
+          <button
+            class="w-full flex items-center gap-2.5 px-3 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors text-left"
+            @click="openNewProject"
+          >
+            <i class="fa-thin fa-pen-to-square text-gray-400 w-4 text-center" />
+            Leeres Projekt
+          </button>
+        </div>
+      </div>
     </div>
 
     <!-- Logo: Mobile, absolut zentriert -->
@@ -106,7 +125,7 @@ function openNewCard() {
         </span>
       </button>
 
-      <template v-if="hasData">
+      <template v-if="isInitialized">
         <div class="w-px h-5 bg-gray-200" />
         <template v-if="confirmingReset">
           <span class="hidden lg:inline text-xs text-red-600">Alle Daten löschen?</span>
@@ -127,14 +146,6 @@ function openNewCard() {
             <span class="hidden lg:inline ml-1">Abbrechen</span>
           </button>
         </template>
-        <button
-          v-else
-          class="w-8 h-8 flex items-center justify-center rounded-full border border-gray-200 hover:bg-red-50 text-gray-400 hover:text-red-500 transition-colors"
-          title="Neu starten – alle Daten löschen"
-          @click="requestReset"
-        >
-          <i class="fa-thin fa-rotate-left" />
-        </button>
       </template>
     </div>
   </header>

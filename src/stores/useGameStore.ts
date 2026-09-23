@@ -9,6 +9,7 @@ function slugify(name: string): string {
 
 export const useGameStore = defineStore('game', {
   state: () => ({
+    isInitialized: false,
     parties: [] as Party[],
     statements: [] as Statement[],
     cards: {} as Record<string, Card>,
@@ -65,9 +66,9 @@ export const useGameStore = defineStore('game', {
       return (card: Card): ImageConfig | null => {
         if (card.frontImage) return card.frontImage
         if (state.frontImageGrouping === 'thema') {
-          return state.cardFrontThemaImages[card.statementId] ?? state.cardFrontGlobalImage ?? null
+          return (card.statementId ? state.cardFrontThemaImages[card.statementId] : undefined) ?? state.cardFrontGlobalImage ?? null
         }
-        return state.cardFrontPartyImages[card.partyId] ?? state.cardFrontGlobalImage ?? null
+        return (card.partyId ? state.cardFrontPartyImages[card.partyId] : undefined) ?? state.cardFrontGlobalImage ?? null
       }
     },
 
@@ -95,6 +96,7 @@ export const useGameStore = defineStore('game', {
 
   actions: {
     importFromExcel(parsed: ParsedExcel) {
+      this.isInitialized = true
       this.parties = parsed.parties.map((p, i) => ({
         id: slugify(p.name),
         name: p.name,
@@ -119,6 +121,7 @@ export const useGameStore = defineStore('game', {
           const htmlContent = rawText
             ? rawText.split('\n').filter(t => t.trim()).map(t => `<p>${t}</p>`).join('')
             : ''
+          if (!htmlContent) continue
           this.cards[cardId] = {
             id: cardId,
             partyId: party.id,
@@ -184,6 +187,39 @@ export const useGameStore = defineStore('game', {
       if (card) card.frontImage = config
     },
 
+    addCardForParty(partyId: string): string {
+      const party = this.parties.find(p => p.id === partyId)
+      const stmtId = `stmt-${Date.now()}`
+      this.statements.push({ id: stmtId, rowIndex: this.statements.length, label: '' })
+      const cardId = `${stmtId}__${partyId}`
+      this.cards[cardId] = {
+        id: cardId, partyId, statementId: stmtId,
+        htmlContent: '', fontSizeOverride: null, isOverflowing: false,
+        hiddenCode: generateCode(party?.code ?? 0), frontImage: null,
+      }
+      return cardId
+    },
+
+    setCardParty(cardId: string, partyId: string | null) {
+      const card = this.cards[cardId]
+      if (card) card.partyId = partyId
+    },
+
+    setCardStatement(cardId: string, statementId: string | null) {
+      const card = this.cards[cardId]
+      if (card) card.statementId = statementId
+    },
+
+    addCardForStatement(statementId: string): string {
+      const id = `card-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`
+      this.cards[id] = {
+        id, partyId: null, statementId,
+        htmlContent: '', fontSizeOverride: null, isOverflowing: false,
+        hiddenCode: generateCode(0), frontImage: null,
+      }
+      return id
+    },
+
     setCardFrontThemaImage(statementId: string, config: ImageConfig | null) {
       if (config) {
         this.cardFrontThemaImages[statementId] = config
@@ -207,19 +243,21 @@ export const useGameStore = defineStore('game', {
       }
     },
 
-    addParty(name: string): string {
+    addParty(name: string, createCards = true): string {
       const base = slugify(name) || 'partei'
       let id = base
       let n = 2
       while (this.parties.some(p => p.id === id)) id = `${base}-${n++}`
       const code = this.parties.length + 1
       this.parties.push({ id, name, code })
-      for (const stmt of this.statements) {
-        const cardId = `${stmt.id}__${id}`
-        this.cards[cardId] = {
-          id: cardId, partyId: id, statementId: stmt.id,
-          htmlContent: '', fontSizeOverride: null, isOverflowing: false,
-          hiddenCode: generateCode(code), frontImage: null,
+      if (createCards) {
+        for (const stmt of this.statements) {
+          const cardId = `${stmt.id}__${id}`
+          this.cards[cardId] = {
+            id: cardId, partyId: id, statementId: stmt.id,
+            htmlContent: '', fontSizeOverride: null, isOverflowing: false,
+            hiddenCode: generateCode(code), frontImage: null,
+          }
         }
       }
       return id
@@ -236,16 +274,18 @@ export const useGameStore = defineStore('game', {
       this.parties.forEach((p, i) => { p.code = i + 1 })
     },
 
-    addStatement(label: string): string {
+    addStatement(label: string, createCards = true): string {
       const id = `stmt-${Date.now()}`
       const rowIndex = this.statements.length
       this.statements.push({ id, rowIndex, label })
-      for (const party of this.parties) {
-        const cardId = `${id}__${party.id}`
-        this.cards[cardId] = {
-          id: cardId, partyId: party.id, statementId: id,
-          htmlContent: '', fontSizeOverride: null, isOverflowing: false,
-          hiddenCode: generateCode(party.code), frontImage: null,
+      if (createCards) {
+        for (const party of this.parties) {
+          const cardId = `${id}__${party.id}`
+          this.cards[cardId] = {
+            id: cardId, partyId: party.id, statementId: id,
+            htmlContent: '', fontSizeOverride: null, isOverflowing: false,
+            hiddenCode: generateCode(party.code), frontImage: null,
+          }
         }
       }
       return id
@@ -281,7 +321,14 @@ export const useGameStore = defineStore('game', {
       return newId
     },
 
+    initManual(hasThema: boolean) {
+      this.reset()
+      this.isInitialized = true
+      this.hasThema = hasThema
+    },
+
     reset() {
+      this.isInitialized = false
       this.parties = []
       this.statements = []
       this.cards = {}

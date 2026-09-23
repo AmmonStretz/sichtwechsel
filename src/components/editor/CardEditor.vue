@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 import { useGameStore } from '@/stores/useGameStore'
 import { useUiStore } from '@/stores/useUiStore'
 import TipTapEditor from './TipTapEditor.vue'
@@ -9,14 +9,6 @@ const uiStore = useUiStore()
 
 const card = computed(() =>
   uiStore.selectedCardId ? gameStore.cards[uiStore.selectedCardId] : null
-)
-
-const party = computed(() =>
-  card.value ? gameStore.getPartyById(card.value.partyId) : null
-)
-
-const statement = computed(() =>
-  card.value ? gameStore.getStatementById(card.value.statementId) : null
 )
 
 const htmlContent = computed({
@@ -40,29 +32,45 @@ function resetFontSize() {
   if (card.value) gameStore.setCardFontSize(card.value.id, null)
 }
 
-// --- Karte löschen ---
-const confirmingDelete = ref(false)
-
-function deleteCard() {
+function setParty(e: Event) {
   if (!card.value) return
-  gameStore.deleteCard(card.value.id)
-  uiStore.selectedCardId = null
-  confirmingDelete.value = false
+  const val = (e.target as HTMLSelectElement).value
+  gameStore.setCardParty(card.value.id, val || null)
 }
 
-
-
+function setStatement(e: Event) {
+  if (!card.value) return
+  const val = (e.target as HTMLSelectElement).value
+  gameStore.setCardStatement(card.value.id, val || null)
+}
 </script>
 
 <template>
   <div v-if="card" class="flex flex-col gap-3 p-3">
-    <!-- Karten-Info -->
-    <div class="text-xs text-gray-500 border-b border-gray-100 pb-2">
-      <div class="font-semibold text-gray-700">
-        {{ party?.name ?? '–' }}
-        <span class="font-normal text-gray-400 ml-1">(Partei {{ party?.code }})</span>
+    <!-- Zuweisung -->
+    <div class="space-y-2 border-b border-gray-100 pb-3">
+      <div>
+        <label class="text-xs text-gray-500 mb-0.5 block">Partei</label>
+        <select
+          :value="card.partyId ?? ''"
+          class="w-full text-xs border border-gray-200 rounded px-2 py-1.5 bg-white focus:outline-none focus:border-primary-400"
+          @change="setParty"
+        >
+          <option value="">Ohne Partei</option>
+          <option v-for="p in gameStore.parties" :key="p.id" :value="p.id">{{ p.name }}</option>
+        </select>
       </div>
-      <div class="truncate mt-0.5">{{ statement?.label ?? '–' }}</div>
+      <div v-if="gameStore.hasThema">
+        <label class="text-xs text-gray-500 mb-0.5 block">Thema</label>
+        <select
+          :value="card.statementId ?? ''"
+          class="w-full text-xs border border-gray-200 rounded px-2 py-1.5 bg-white focus:outline-none focus:border-primary-400"
+          @change="setStatement"
+        >
+          <option value="">Ohne Thema</option>
+          <option v-for="s in gameStore.statements" :key="s.id" :value="s.id">{{ s.label }}</option>
+        </select>
+      </div>
     </div>
 
     <!-- WYSIWYG -->
@@ -101,31 +109,6 @@ function deleteCard() {
         Individuelle Größe aktiv (global: {{ gameStore.globalFontSize }}px)
       </div>
     </div>
-
-    <!-- Karte löschen -->
-    <div class="border-t border-gray-100 pt-3">
-      <div v-if="confirmingDelete" class="rounded bg-red-50 px-2 py-2">
-        <div class="text-xs text-red-700 mb-1.5">Diese Karte wirklich löschen?</div>
-        <div class="flex gap-1">
-          <button
-            class="flex-1 text-xs px-2 py-1 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
-            @click="deleteCard"
-          >Löschen</button>
-          <button
-            class="flex-1 text-xs px-2 py-1 border border-gray-200 rounded hover:bg-gray-50 transition-colors"
-            @click="confirmingDelete = false"
-          >Abbrechen</button>
-        </div>
-      </div>
-      <button
-        v-else
-        class="w-full text-xs px-3 py-1.5 border border-red-200 text-red-500 rounded hover:bg-red-50 transition-colors"
-        @click="confirmingDelete = true"
-      >
-        <i class="fa-thin fa-trash mr-1" /> Karte löschen
-      </button>
-    </div>
-
   </div>
 
   <div v-else class="p-4 text-sm text-gray-400 text-center">

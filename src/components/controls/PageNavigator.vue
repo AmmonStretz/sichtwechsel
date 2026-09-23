@@ -38,7 +38,7 @@ function jumpToFirstOverflow() {
 
 <template>
   <div class="flex items-center justify-between px-4 py-2 border-b border-gray-100 bg-gray-50">
-    <!-- Vorder-/Rückseiten-Toggle -->
+    <!-- Links: Vorder-/Rückseiten-Toggle -->
     <div data-tour="mode-toggle" class="flex rounded-md border border-gray-200 overflow-hidden text-xs">
       <button
         class="px-3 py-1.5 transition-colors"
@@ -56,29 +56,8 @@ function jumpToFirstOverflow() {
       </button>
     </div>
 
-    <!-- Filter -->
-    <div class="flex items-center gap-2">
-      <select
-        :value="uiStore.filterPartyId"
-        class="text-xs border border-gray-200 rounded px-2 py-1 bg-white focus:outline-none focus:border-primary-400"
-        @change="uiStore.setFilterParty(($event.target as HTMLSelectElement).value)"
-      >
-        <option value="">Alle Parteien</option>
-        <option v-for="p in gameStore.parties" :key="p.id" :value="p.id">{{ p.name }}</option>
-      </select>
-      <select
-        v-if="gameStore.hasThema"
-        :value="uiStore.filterStatementId"
-        class="text-xs border border-gray-200 rounded px-2 py-1 bg-white focus:outline-none focus:border-primary-400"
-        @change="uiStore.setFilterStatement(($event.target as HTMLSelectElement).value)"
-      >
-        <option value="">Alle Themen</option>
-        <option v-for="s in gameStore.statements" :key="s.id" :value="s.id">{{ s.label }}</option>
-      </select>
-    </div>
-
-    <!-- Seiten-Navigation -->
-    <div data-tour="page-nav" class="flex items-center gap-2 text-sm">
+    <!-- Mitte: Seiten-Navigation (nur im Druck-Layout) -->
+    <div v-if="uiStore.layoutMode === 'druck'" data-tour="page-nav" class="flex items-center gap-2 text-sm">
       <button
         class="w-7 h-7 flex items-center justify-center rounded hover:bg-gray-200 disabled:opacity-30 transition-colors"
         :disabled="!canPrev"
@@ -95,6 +74,33 @@ function jumpToFirstOverflow() {
         @click="next"
       >
         <i class="fa-thin fa-chevron-right" />
+      </button>
+    </div>
+    <div v-else />
+
+    <!-- Rechts: Ansicht (getrennt) -->
+    <div class="flex rounded-md border border-gray-200 overflow-hidden text-xs">
+      <button
+        class="px-3 py-1.5 transition-colors"
+        :class="uiStore.layoutMode === 'partei' ? 'bg-primary-600 text-white' : 'bg-white hover:bg-gray-50 text-gray-700'"
+        @click="uiStore.setLayoutMode('partei')"
+      >
+        <i class="fa-thin fa-flag mr-1" />Partei
+      </button>
+      <button
+        v-if="gameStore.hasThema"
+        class="px-3 py-1.5 transition-colors"
+        :class="uiStore.layoutMode === 'thema' ? 'bg-primary-600 text-white' : 'bg-white hover:bg-gray-50 text-gray-700'"
+        @click="uiStore.setLayoutMode('thema')"
+      >
+        <i class="fa-thin fa-tags mr-1" />Thema
+      </button>
+      <button
+        class="px-3 py-1.5 transition-colors border-l border-gray-200"
+        :class="uiStore.layoutMode === 'druck' ? 'bg-primary-600 text-white' : 'bg-white hover:bg-gray-50 text-gray-700'"
+        @click="uiStore.setLayoutMode('druck')"
+      >
+        <i class="fa-thin fa-print mr-1" />Druck
       </button>
     </div>
   </div>
