@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import type { PreviewMode, ParsedExcel } from '@/types'
+import type { PreviewMode, LayoutMode, ParsedExcel } from '@/types'
 
 export const useUiStore = defineStore('ui', {
   state: () => ({
@@ -8,13 +8,14 @@ export const useUiStore = defineStore('ui', {
     tourStep: 0,
     currentPage: 0,
     previewMode: 'vorderseiten' as PreviewMode,
+    layoutMode: 'partei' as LayoutMode,
     isExporting: false,
     showImportDialog: false,
     showImportPreview: false,
     pendingImport: null as ParsedExcel | null,
     firstColumnIsLabel: true,
     showDataDialog: false,
-    activeSidebarSection: 'schrift' as 'schrift' | 'bilder' | 'daten',
+    activeSidebarSection: 'schrift' as 'schrift' | 'bilder',
     sidebarOpen: false,
     filterPartyId: '',
     filterStatementId: '',
@@ -44,6 +45,11 @@ export const useUiStore = defineStore('ui', {
 
     setPreviewMode(mode: PreviewMode) {
       this.previewMode = mode
+      this.currentPage = 0
+    },
+
+    setLayoutMode(mode: LayoutMode) {
+      this.layoutMode = mode
       this.currentPage = 0
     },
 
@@ -89,6 +95,7 @@ export const useUiStore = defineStore('ui', {
       this.selectedCardId = null
       this.currentPage = 0
       this.previewMode = 'vorderseiten'
+      this.layoutMode = 'partei'
       this.showImportDialog = false
       this.showImportPreview = false
       this.pendingImport = null

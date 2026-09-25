@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { useGameStore } from '@/stores/useGameStore'
 import { useUiStore } from '@/stores/useUiStore'
 
@@ -80,31 +80,6 @@ function addThema() {
   showNewThema.value = false
 }
 
-// --- Neue Karte ---
-const newCardPartyId = ref('')
-const newCardStmtId = ref('')  // nur bei hasThema
-
-const canOpenCard = computed(() => {
-  if (!newCardPartyId.value) return false
-  if (gameStore.hasThema) return newCardStmtId.value !== ''
-  return true
-})
-
-function createOrOpenCard() {
-  if (!newCardPartyId.value) return
-  let stmtId = newCardStmtId.value
-  if (!gameStore.hasThema) {
-    // Neue anonyme Karte erstellen
-    const label = `Karte ${gameStore.statements.length + 1}`
-    stmtId = gameStore.addStatement(label)
-  }
-  const cardId = `${stmtId}__${newCardPartyId.value}`
-  uiStore.selectedCardId = cardId
-  uiStore.setCurrentPage(gameStore.getPageForCard(cardId))
-  uiStore.activeSidebarSection = 'schrift'
-  newCardPartyId.value = ''
-  newCardStmtId.value = ''
-}
 </script>
 
 <template>
@@ -279,39 +254,6 @@ function createOrOpenCard() {
       </button>
     </div>
 
-    <!-- ── NEUE KARTE ──────────────────────────────── -->
-    <div v-if="gameStore.parties.length > 0">
-      <div class="text-xs font-medium text-gray-700 mb-1.5">Neue Karte</div>
-      <div class="space-y-2">
-        <div>
-          <label class="text-xs text-gray-500 mb-0.5 block">Partei</label>
-          <select
-            v-model="newCardPartyId"
-            class="w-full text-xs border border-gray-200 rounded px-2 py-1.5 bg-white focus:outline-none focus:border-primary-400"
-          >
-            <option value="">Partei wählen…</option>
-            <option v-for="p in gameStore.parties" :key="p.id" :value="p.id">{{ p.name }}</option>
-          </select>
-        </div>
-        <div v-if="gameStore.hasThema">
-          <label class="text-xs text-gray-500 mb-0.5 block">Thema</label>
-          <select
-            v-model="newCardStmtId"
-            class="w-full text-xs border border-gray-200 rounded px-2 py-1.5 bg-white focus:outline-none focus:border-primary-400"
-          >
-            <option value="">Thema wählen…</option>
-            <option v-for="s in gameStore.statements" :key="s.id" :value="s.id">{{ s.label }}</option>
-          </select>
-        </div>
-        <button
-          :disabled="!canOpenCard"
-          class="w-full text-xs px-3 py-1.5 bg-primary-600 text-white rounded hover:bg-primary-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors font-medium"
-          @click="createOrOpenCard"
-        >
-          <i class="fa-thin fa-plus mr-1" /> Karte erstellen
-        </button>
-      </div>
-    </div>
 
   </div>
 </template>

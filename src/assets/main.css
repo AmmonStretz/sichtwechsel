@@ -41,11 +41,14 @@
 }
 
 .print-page:not(.is-pdf) .card-front,
-.print-page:not(.is-pdf) .card-back {
+.print-page:not(.is-pdf) .card-back,
+.grouped-preview .card-front,
+.grouped-preview .card-back {
   box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
 }
 
-.print-page:not(.is-pdf) .card-front.card-selected {
+.print-page:not(.is-pdf) .card-front.card-selected,
+.grouped-preview .card-front.card-selected {
   outline: 2.5px solid var(--color-primary-500);
   outline-offset: -2px;
   z-index: 1;

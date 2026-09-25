@@ -54,7 +54,7 @@ async function handleExportPdf() {
     </div>
 
     <div class="flex flex-1 overflow-hidden">
-      <AppSidebar />
+      <AppSidebar v-if="uiStore.layoutMode !== 'druck'" />
       <AppMain />
     </div>
 

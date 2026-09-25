@@ -5,7 +5,6 @@ import { useGameStore } from '@/stores/useGameStore'
 import CardEditor from '@/components/editor/CardEditor.vue'
 import TextSizeControls from '@/components/controls/TextSizeControls.vue'
 import ImageUploadWidget from '@/components/controls/ImageUploadWidget.vue'
-import DataSection from '@/components/data/DataSection.vue'
 
 const uiStore = useUiStore()
 const gameStore = useGameStore()
@@ -15,16 +14,6 @@ const activeSection = computed({
   set: (v) => { uiStore.activeSidebarSection = v },
 })
 const openAccordionId = ref<string | null>(null)
-
-const selectedCard = computed(() =>
-  uiStore.selectedCardId ? gameStore.cards[uiStore.selectedCardId] : null
-)
-const selectedParty = computed(() =>
-  selectedCard.value ? gameStore.getPartyById(selectedCard.value.partyId) : null
-)
-const selectedStatement = computed(() =>
-  selectedCard.value ? gameStore.getStatementById(selectedCard.value.statementId) : null
-)
 </script>
 
 <template>
@@ -52,15 +41,6 @@ const selectedStatement = computed(() =>
         @click="activeSection = 'bilder'"
       >
         <span data-tour="sidebar-bilder">Bilder</span>
-      </button>
-      <button
-        class="flex-1 text-xs py-2.5 font-medium transition-colors border-b-2"
-        :class="activeSection === 'daten'
-          ? 'border-primary-600 text-primary-600'
-          : 'border-transparent text-gray-500 hover:text-gray-700'"
-        @click="activeSection = 'daten'"
-      >
-        Daten
       </button>
       <button
         class="lg:hidden w-10 flex items-center justify-center text-gray-400 hover:text-gray-600 border-b-2 border-transparent shrink-0"
@@ -211,10 +191,6 @@ const selectedStatement = computed(() =>
         </div>
       </template>
 
-      <!-- ── DATEN ──────────────────────────────────── -->
-      <template v-else-if="activeSection === 'daten'">
-        <DataSection />
-      </template>
 
     </div>
   </aside>

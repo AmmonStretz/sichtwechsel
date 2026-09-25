@@ -17,8 +17,8 @@ export interface Statement {
 
 export interface Card {
   id: string
-  partyId: string
-  statementId: string
+  partyId: string | null
+  statementId: string | null
   htmlContent: string
   fontSizeOverride: number | null
   isOverflowing: boolean
@@ -36,3 +36,4 @@ export interface ParsedExcel {
 }
 
 export type PreviewMode = 'vorderseiten' | 'rueckseiten'
+export type LayoutMode = 'druck' | 'partei' | 'thema'

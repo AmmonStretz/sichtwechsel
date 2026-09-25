@@ -46,7 +46,7 @@ watch(isOverflowing, val => {
 })
 
 function handleClick() {
-  if (!props.isPdf) {
+  if (!props.isPdf && uiStore.layoutMode !== 'druck') {
     const wasSelected = isSelected.value
     uiStore.selectCard(wasSelected ? null : props.card.id)
     if (!wasSelected) emit('select')
@@ -57,7 +57,7 @@ function handleClick() {
 <template>
   <div
     class="card-front"
-    :class="{ 'card-selected': isSelected && !isPdf }"
+    :class="{ 'card-selected': isSelected && !isPdf, 'cursor-default!': uiStore.layoutMode === 'druck' }"
     @click="handleClick"
   >
     <!-- Hintergrundbild -->
