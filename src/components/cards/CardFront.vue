@@ -4,6 +4,7 @@ import type { Card } from '@/types'
 import { useGameStore } from '@/stores/useGameStore'
 import { useUiStore } from '@/stores/useUiStore'
 import { useOverflowDetection } from '@/composables/useOverflowDetection'
+import CodeFrame from './CodeFrame.vue'
 
 const props = defineProps<{
   card: Card
@@ -28,13 +29,23 @@ const effectiveFrontImage = computed(() =>
   gameStore.getEffectiveFrontImage(props.card)
 )
 
-const codeStyle = computed(() => ({
-  color: gameStore.codeColor,
-  fontSize: gameStore.codeFontSize + 'px',
-  opacity: gameStore.codeOpacity / 100,
-  bottom: gameStore.globalMargin + 'mm',
-  right: gameStore.globalMargin + 'mm',
-}))
+// Extra padding from the circle frame (outerMargin + circleSize + innerMargin)
+const framePadding = computed(() =>
+  gameStore.showCode
+    ? gameStore.codeOuterMargin + gameStore.codeCircleSize + gameStore.codeInnerMargin
+    : 0
+)
+
+const contentStyle = computed(() => {
+  const m = gameStore.globalMargin
+  const f = framePadding.value
+  return {
+    top:    (m + f) + 'mm',
+    left:   (m + f) + 'mm',
+    right:  (m + f) + 'mm',
+    bottom: (m + f) + 'mm',
+  }
+})
 
 const { isOverflowing } = useOverflowDetection(
   textAreaRef,
@@ -78,24 +89,16 @@ function handleClick() {
       !
     </div>
 
+    <!-- Kreisrahmen -->
+    <CodeFrame v-if="gameStore.showCode" :card="card" />
+
     <!-- Textinhalt -->
     <div
       ref="textAreaRef"
       class="card-text-area"
-      :style="{
-        top: gameStore.globalMargin + 'mm',
-        left: gameStore.globalMargin + 'mm',
-        right: gameStore.globalMargin + 'mm',
-        bottom: (gameStore.globalMargin + 2) + 'mm',
-        fontSize: effectiveFontSize + 'px',
-      }"
+      :style="{ ...contentStyle, fontSize: effectiveFontSize + 'px' }"
     >
       <div class="tiptap-output" v-html="card.htmlContent" />
-    </div>
-
-    <!-- Identifizierungscode -->
-    <div v-if="gameStore.showCode" class="card-hidden-code" :style="codeStyle">
-      {{ card.hiddenCode }}
     </div>
   </div>
 </template>

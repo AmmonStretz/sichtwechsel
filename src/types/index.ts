@@ -22,7 +22,6 @@ export interface Card {
   htmlContent: string
   fontSizeOverride: number | null
   isOverflowing: boolean
-  hiddenCode: string
   frontImage: ImageConfig | null
 }
 

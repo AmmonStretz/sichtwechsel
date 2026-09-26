@@ -15,8 +15,17 @@ function setCodeColor(e: Event) {
   gameStore.setCodeColor((e.target as HTMLInputElement).value)
 }
 
-function setCodeFontSize(e: Event) {
-  gameStore.setCodeFontSize(Number((e.target as HTMLInputElement).value))
+function setCodeOuterMargin(e: Event) {
+  gameStore.setCodeOuterMargin(Number((e.target as HTMLInputElement).value))
+}
+function setCodeInnerMargin(e: Event) {
+  gameStore.setCodeInnerMargin(Number((e.target as HTMLInputElement).value))
+}
+function setCodeCircleGap(e: Event) {
+  gameStore.setCodeCircleGap(Number((e.target as HTMLInputElement).value))
+}
+function setCodeCircleSize(e: Event) {
+  gameStore.setCodeCircleSize(Number((e.target as HTMLInputElement).value))
 }
 
 function setCodeOpacity(e: Event) {
@@ -106,17 +115,65 @@ function setCodeOpacity(e: Event) {
 
         <div class="space-y-1">
           <div class="flex items-center justify-between">
-            <label class="text-xs text-gray-600">Schriftgröße</label>
-            <span class="text-xs text-gray-500">{{ gameStore.codeFontSize }} px</span>
+            <label class="text-xs text-gray-600">Abstand Rand → Rahmen</label>
+            <span class="text-xs text-gray-500">{{ gameStore.codeOuterMargin }} mm</span>
           </div>
           <input
             type="range"
-            min="4"
-            max="18"
-            step="0.5"
-            :value="gameStore.codeFontSize"
+            min="0.5"
+            max="5"
+            step="0.25"
+            :value="gameStore.codeOuterMargin"
             class="w-full h-1.5 accent-primary-600"
-            @input="setCodeFontSize"
+            @input="setCodeOuterMargin"
+          />
+        </div>
+
+        <div class="space-y-1">
+          <div class="flex items-center justify-between">
+            <label class="text-xs text-gray-600">Kreisdurchmesser</label>
+            <span class="text-xs text-gray-500">{{ gameStore.codeCircleSize }} mm</span>
+          </div>
+          <input
+            type="range"
+            min="1"
+            max="6"
+            step="0.25"
+            :value="gameStore.codeCircleSize"
+            class="w-full h-1.5 accent-primary-600"
+            @input="setCodeCircleSize"
+          />
+        </div>
+
+        <div class="space-y-1">
+          <div class="flex items-center justify-between">
+            <label class="text-xs text-gray-600">Abstand zwischen Kreisen</label>
+            <span class="text-xs text-gray-500">{{ gameStore.codeCircleGap }} mm</span>
+          </div>
+          <input
+            type="range"
+            min="0"
+            max="3"
+            step="0.25"
+            :value="gameStore.codeCircleGap"
+            class="w-full h-1.5 accent-primary-600"
+            @input="setCodeCircleGap"
+          />
+        </div>
+
+        <div class="space-y-1">
+          <div class="flex items-center justify-between">
+            <label class="text-xs text-gray-600">Abstand Rahmen → Text</label>
+            <span class="text-xs text-gray-500">{{ gameStore.codeInnerMargin }} mm</span>
+          </div>
+          <input
+            type="range"
+            min="0.5"
+            max="5"
+            step="0.25"
+            :value="gameStore.codeInnerMargin"
+            class="w-full h-1.5 accent-primary-600"
+            @input="setCodeInnerMargin"
           />
         </div>
       </template>

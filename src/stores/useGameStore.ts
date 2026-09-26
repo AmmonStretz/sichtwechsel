@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
 import type { Party, Statement, Card, ParsedExcel, ImageConfig } from '@/types'
-import { generateCode } from '@/utils/hiddenCode'
 import { exportToExcel } from '@/utils/excelParser'
 
 function slugify(name: string): string {
@@ -16,8 +15,11 @@ export const useGameStore = defineStore('game', {
     globalFontSize: 14,
     globalMargin: 3,
     codeColor: '#000000',
-    codeFontSize: 12,
     codeOpacity: 100,
+    codeOuterMargin: 1.5,
+    codeInnerMargin: 1.5,
+    codeCircleSize: 2.5,
+    codeCircleGap: 0.5,
     showCode: false,
     cardBackImage: null as ImageConfig | null,
     cardFrontGlobalImage: null as ImageConfig | null,
@@ -129,7 +131,6 @@ export const useGameStore = defineStore('game', {
             htmlContent,
             fontSizeOverride: null,
             isOverflowing: false,
-            hiddenCode: generateCode(party.code),
             frontImage: null,
           }
         }
@@ -158,13 +159,14 @@ export const useGameStore = defineStore('game', {
       this.codeColor = color
     },
 
-    setCodeFontSize(size: number) {
-      this.codeFontSize = size
-    },
-
     setCodeOpacity(opacity: number) {
       this.codeOpacity = opacity
     },
+
+    setCodeOuterMargin(v: number) { this.codeOuterMargin = v },
+    setCodeInnerMargin(v: number) { this.codeInnerMargin = v },
+    setCodeCircleSize(v: number) { this.codeCircleSize = v },
+    setCodeCircleGap(v: number) { this.codeCircleGap = v },
 
     setShowCode(show: boolean) {
       this.showCode = show
@@ -189,13 +191,11 @@ export const useGameStore = defineStore('game', {
 
     addCardForParty(partyId: string): string {
       const party = this.parties.find(p => p.id === partyId)
-      const stmtId = `stmt-${Date.now()}`
-      this.statements.push({ id: stmtId, rowIndex: this.statements.length, label: '' })
-      const cardId = `${stmtId}__${partyId}`
+      const cardId = `card-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`
       this.cards[cardId] = {
-        id: cardId, partyId, statementId: stmtId,
+        id: cardId, partyId, statementId: null,
         htmlContent: '', fontSizeOverride: null, isOverflowing: false,
-        hiddenCode: generateCode(party?.code ?? 0), frontImage: null,
+        frontImage: null,
       }
       return cardId
     },
@@ -215,7 +215,7 @@ export const useGameStore = defineStore('game', {
       this.cards[id] = {
         id, partyId: null, statementId,
         htmlContent: '', fontSizeOverride: null, isOverflowing: false,
-        hiddenCode: generateCode(0), frontImage: null,
+        frontImage: null,
       }
       return id
     },
@@ -256,7 +256,7 @@ export const useGameStore = defineStore('game', {
           this.cards[cardId] = {
             id: cardId, partyId: id, statementId: stmt.id,
             htmlContent: '', fontSizeOverride: null, isOverflowing: false,
-            hiddenCode: generateCode(code), frontImage: null,
+            frontImage: null,
           }
         }
       }
@@ -284,7 +284,7 @@ export const useGameStore = defineStore('game', {
           this.cards[cardId] = {
             id: cardId, partyId: party.id, statementId: id,
             htmlContent: '', fontSizeOverride: null, isOverflowing: false,
-            hiddenCode: generateCode(party.code), frontImage: null,
+            frontImage: null,
           }
         }
       }

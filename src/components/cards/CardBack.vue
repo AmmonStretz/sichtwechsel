@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useGameStore } from '@/stores/useGameStore'
+import defaultBackground from '@/assets/images/default_background.svg'
 
 const gameStore = useGameStore()
 </script>
@@ -7,7 +8,7 @@ const gameStore = useGameStore()
 <template>
   <div class="card-back">
     <img
-      :src="gameStore.cardBackImage?.url ?? '/background-default.png'"
+      :src="gameStore.cardBackImage?.url ?? defaultBackground"
       class="absolute inset-0 w-full h-full object-cover pointer-events-none"
       :style="gameStore.cardBackImage ? { transform: `scale(${gameStore.cardBackImage.scale})` } : {}"
       alt=""

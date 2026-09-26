@@ -237,12 +237,14 @@ function cancelAddCategory() { addingCategory.value = false; newCategoryLabel.va
         <div
           v-for="card in orphanCards"
           :key="card.id"
-          class="relative overflow-hidden"
+          class="relative"
           :style="{ height: cardHeight + 'px' }"
         >
+          <div class="overflow-hidden w-full h-full">
           <div :style="{ transform: `scale(${cardScale})`, transformOrigin: 'top left', width: CARD_NATURAL_W + 'px', height: CARD_NATURAL_H + 'px' }">
             <CardFront v-if="mode === 'vorderseiten'" :card="card" />
             <CardBack v-else />
+          </div>
           </div>
           <button
             v-if="uiStore.selectedCardId === card.id"
