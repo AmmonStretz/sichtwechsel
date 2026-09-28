@@ -36,7 +36,7 @@ const tools = [
   <div class="h-full overflow-auto bg-gray-50 flex flex-col">
     <!-- Header -->
     <header class="bg-white border-b border-gray-200 px-6 py-4 flex items-center gap-3">
-      <img src="@/assets/logo.jpg" alt="Logo" class="h-8 w-auto object-contain" />
+      <img src="@/assets/images/logo.svg" alt="Logo" class="h-8 w-auto object-contain" />
       <div class="w-px h-6 bg-gray-200" />
       <span class="text-sm font-medium text-gray-500">Aktionsmittel</span>
     </header>

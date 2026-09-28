@@ -51,7 +51,7 @@ function openNewProject() {
 
       <!-- Logo: nur Desktop in linker Gruppe -->
       <RouterLink to="/" class="hidden lg:block mr-1">
-        <img src="@/assets/logo.jpg" alt="Logo" class="h-8 w-auto object-contain" />
+        <img src="@/assets/images/logo.svg" alt="Logo" class="h-8 w-auto object-contain" />
       </RouterLink>
 
       <!-- Neues Projekt Dropdown -->
@@ -100,7 +100,7 @@ function openNewProject() {
 
     <!-- Logo: Mobile, absolut zentriert -->
     <RouterLink to="/" class="lg:hidden absolute left-1/2 -translate-x-1/2">
-      <img src="@/assets/logo.jpg" alt="Logo" class="h-8 w-auto object-contain" />
+      <img src="@/assets/images/logo.svg" alt="Logo" class="h-8 w-auto object-contain" />
     </RouterLink>
 
     <!-- Rechts: Excel + PDF + Reset -->
