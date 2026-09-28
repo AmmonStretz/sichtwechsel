@@ -19,6 +19,8 @@ export const useUiStore = defineStore('ui', {
     sidebarOpen: false,
     filterPartyId: '',
     filterStatementId: '',
+    showImpressumDialog: false,
+    showDatenschutzDialog: false,
   }),
 
   actions: {
@@ -89,6 +91,22 @@ export const useUiStore = defineStore('ui', {
 
     closeDataDialog() {
       this.showDataDialog = false
+    },
+
+    openImpressumDialog() {
+      this.showImpressumDialog = true
+    },
+
+    closeImpressumDialog() {
+      this.showImpressumDialog = false
+    },
+
+    openDatenschutzDialog() {
+      this.showDatenschutzDialog = true
+    },
+
+    closeDatenschutzDialog() {
+      this.showDatenschutzDialog = false
     },
 
     resetSession() {

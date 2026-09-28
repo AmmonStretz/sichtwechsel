@@ -50,7 +50,9 @@ function openNewProject() {
       </button>
 
       <!-- Logo: nur Desktop in linker Gruppe -->
-      <img src="@/assets/logo.jpg" alt="Logo" class="hidden lg:block h-8 w-auto object-contain mr-1" />
+      <RouterLink to="/" class="hidden lg:block mr-1">
+        <img src="@/assets/logo.jpg" alt="Logo" class="h-8 w-auto object-contain" />
+      </RouterLink>
 
       <!-- Neues Projekt Dropdown -->
       <div class="relative">
@@ -97,7 +99,9 @@ function openNewProject() {
     </div>
 
     <!-- Logo: Mobile, absolut zentriert -->
-    <img src="@/assets/logo.jpg" alt="Logo" class="lg:hidden absolute left-1/2 -translate-x-1/2 h-8 w-auto object-contain pointer-events-none" />
+    <RouterLink to="/" class="lg:hidden absolute left-1/2 -translate-x-1/2">
+      <img src="@/assets/logo.jpg" alt="Logo" class="h-8 w-auto object-contain" />
+    </RouterLink>
 
     <!-- Rechts: Excel + PDF + Reset -->
     <div class="flex items-center gap-1.5">
